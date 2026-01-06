@@ -8,7 +8,7 @@ import { SuccessAnimation } from "@/components/SuccessAnimation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Package, DollarSign, Hash, Layers } from "lucide-react";
+import { ArrowLeft, Loader2, Package, IndianRupee, Hash, Layers } from "lucide-react";
 
 interface LastEntry {
   item_name: string;
@@ -134,7 +134,7 @@ const AddStock = () => {
                 type="text"
                 placeholder="Item Name"
                 value={itemName}
-                onChange={(e) => setItemName(e.target.value)}
+                onChange={(e) => setItemName(e.target.value.toUpperCase())}
                 className="pl-12"
                 required
               />
@@ -146,7 +146,7 @@ const AddStock = () => {
                 type="text"
                 placeholder="Item Code"
                 value={itemCode}
-                onChange={(e) => setItemCode(e.target.value)}
+                onChange={(e) => setItemCode(e.target.value.toUpperCase())}
                 className="pl-12"
                 required
               />
@@ -154,7 +154,7 @@ const AddStock = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="number"
                   step="0.01"
@@ -168,7 +168,7 @@ const AddStock = () => {
               </div>
 
               <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="number"
                   step="0.01"
@@ -203,7 +203,7 @@ const AddStock = () => {
             >
               <p className="text-sm text-muted-foreground mb-1">Stock Value</p>
               <p className="text-2xl font-display font-bold text-gold">
-                ${stockValue}
+                ₹{stockValue}
               </p>
             </motion.div>
           </div>
@@ -255,7 +255,7 @@ const AddStock = () => {
                     </div>
                     <div>
                       <span className="text-muted-foreground">Value:</span>
-                      <span className="ml-2 font-semibold text-gold">${lastEntry.stock_value.toFixed(2)}</span>
+                      <span className="ml-2 font-semibold text-gold">₹{lastEntry.stock_value.toFixed(2)}</span>
                     </div>
                   </div>
                 </motion.div>

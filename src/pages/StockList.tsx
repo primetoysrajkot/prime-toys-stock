@@ -7,7 +7,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Search, Download, Upload, FileText, FileSpreadsheet, Loader2 } from "lucide-react";
+import { ArrowLeft, Search, Download, Upload, FileText, FileSpreadsheet, Loader2, Trash2 } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -71,6 +71,22 @@ const StockList = () => {
     setLoading(false);
   };
 
+  const handleDelete = async (stockId: string) => {
+    if (!window.confirm("Are you sure you want to delete this stock item?")) {
+      return;
+    }
+
+    const { error } = await supabase.from("stocks").delete().match({ id: stockId });
+
+    if (error) {
+      toast.error("Failed to delete stock item");
+      console.error(error);
+    } else {
+      toast.success("Stock item deleted");
+      fetchStocks();
+    }
+  };
+
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     
@@ -85,10 +101,10 @@ const StockList = () => {
       body: filteredStocks.map((stock) => [
         stock.item_name,
         stock.item_code,
-        `$${stock.purchase_price.toFixed(2)}`,
-        `$${stock.selling_price.toFixed(2)}`,
+        `₹${stock.purchase_price.toFixed(2)}`,
+        `₹${stock.selling_price.toFixed(2)}`,
         stock.quantity.toString(),
-        `$${stock.stock_value.toFixed(2)}`,
+        `₹${stock.stock_value.toFixed(2)}`,
       ]),
       styles: { fontSize: 9 },
       headStyles: { fillColor: [232, 121, 87] },
@@ -292,6 +308,7 @@ const StockList = () => {
                     <th className="text-right py-3 px-2 text-xs font-semibold text-muted-foreground">Selling</th>
                     <th className="text-right py-3 px-2 text-xs font-semibold text-muted-foreground">Qty</th>
                     <th className="text-right py-3 px-2 text-xs font-semibold text-muted-foreground">Value</th>
+                    <th className="text-right py-3 px-2 text-xs font-semibold text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -303,13 +320,22 @@ const StockList = () => {
                       transition={{ delay: index * 0.02 }}
                       className="border-b border-border/50 hover:bg-secondary/50 transition-colors"
                     >
-                      <td className="py-3 px-2 font-medium text-sm">{stock.item_name}</td>
-                      <td className="py-3 px-2 text-sm text-muted-foreground">{stock.item_code}</td>
-                      <td className="py-3 px-2 text-sm text-right">${stock.purchase_price.toFixed(2)}</td>
-                      <td className="py-3 px-2 text-sm text-right">${stock.selling_price.toFixed(2)}</td>
-                      <td className="py-3 px-2 text-sm text-right">{stock.quantity}</td>
-                      <td className="py-3 px-2 text-sm text-right font-semibold text-gold">
-                        ${stock.stock_value.toFixed(2)}
+                      <td className="py-3 px-2 font-bold text-sm">{stock.item_name}</td>
+                      <td className="py-3 px-2 text-sm text-muted-foreground font-bold">{stock.item_code}</td>
+                      <td className="py-3 px-2 text-sm text-right font-bold">₹{stock.purchase_price.toFixed(2)}</td>
+                      <td className="py-3 px-2 text-sm text-right font-bold">₹{stock.selling_price.toFixed(2)}</td>
+                      <td className="py-3 px-2 text-sm text-right font-bold">{stock.quantity}</td>
+                      <td className="py-3 px-2 text-sm text-right font-bold text-gold">
+                        ₹{stock.stock_value.toFixed(2)}
+                      </td>
+                      <td className="py-3 px-2 text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(stock.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
                       </td>
                     </motion.tr>
                   ))}
@@ -335,7 +361,7 @@ const StockList = () => {
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Total Stock Value</p>
                 <p className="text-xl font-display font-bold text-gold">
-                  ${filteredStocks.reduce((sum, s) => sum + s.stock_value, 0).toFixed(2)}
+                  ₹{filteredStocks.reduce((sum, s) => sum + s.stock_value, 0).toFixed(2)}
                 </p>
               </div>
             </div>

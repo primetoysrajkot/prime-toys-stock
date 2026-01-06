@@ -10,6 +10,7 @@ import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import AddStock from "./pages/AddStock";
 import StockList from "./pages/StockList";
+import WebView from "./pages/WebView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/add-stock" element={<AddStock />} />
             <Route path="/stock-list" element={<StockList />} />
+            <Route path="/webview" element={<WebView />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
